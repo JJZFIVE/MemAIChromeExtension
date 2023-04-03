@@ -1,16 +1,19 @@
 {
   "name": "MemAI Chrome Extension",
   "version": "1.0",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "description": "I hope you enjoy. I'd love to work at Mem!",
   "icons": {
     "16": "logo.png",
     "48": "logo.png",
     "128": "logo.png"
   },
-  "browser_action": {
+  "action": {
     "default_popup": "index.html",
     "default_title": "MemAI Chrome Extension"
   },
-  "permissions": ["tabs"]
+  "permissions": ["tabs", "storage", "activeTab"],
+  "host_permissions": ["<all_urls>"],
+  "web_accessible_resources": ["index.html", "index.css"],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
