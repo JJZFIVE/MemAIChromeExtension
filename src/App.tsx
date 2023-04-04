@@ -24,6 +24,18 @@ function App() {
       });
   }, []);
 
+  const sendTestMessage = async () => {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      lastFocusedWindow: true,
+    });
+    const response = await chrome.tabs.sendMessage(tab.id as number, {
+      greeting: "hello",
+    });
+    // do something with response here, not outside the function
+    console.log(response);
+  };
+
   return (
     <main>
       <header className="font-work-sans h-[600px] w-[350px]">
@@ -34,6 +46,9 @@ function App() {
           you. Amplify your creativity, automate the mundane, and stay organized
           automatically.
         </p>
+        <button onClick={async () => await sendTestMessage()}>
+          SEND TEST MESSAGE
+        </button>
         <br />
         <p className="mt-2">{tabinfo.url}</p>
         <p className="mt-2">{tabinfo.title}</p>
