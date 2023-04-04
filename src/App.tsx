@@ -36,6 +36,8 @@ function App() {
       value: value,
     });
 
+    // disconnect from connection
+    port.disconnect();
     setApiKey(value);
   }
 
@@ -45,6 +47,9 @@ function App() {
     port.onMessage.addListener((response) => {
       setApiKey(response["MemApiKey"]);
     });
+
+    // disconnect from connection
+    port.disconnect();
   }
 
   if (loading)
