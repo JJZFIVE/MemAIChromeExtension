@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [apiKey, setApiKey] = useState<string | null>("");
+  const [apiKey, setApiKey] = useState<string | undefined>("");
   const [tab, setTab] = useState<any>({});
+
+  const port = chrome.runtime.connect({ name: "myPort" });
 
   async function getTabs() {
     let queryOptions = { active: true, lastFocusedWindow: true };
@@ -16,6 +18,7 @@ function App() {
     async function getData() {
       // Get tab data: this only wanted to work in useEffect
       setLoading(true);
+
       const tab = await getTabs();
       console.log(tab);
       setTab(tab);
@@ -24,32 +27,32 @@ function App() {
       await getStorageApiKey();
 
       setLoading(false);
+
+      return () => {
+        // disconnect port
+        port.disconnect();
+      };
     }
 
     getData();
   }, []);
 
   async function setStorageApiKey(value: string) {
-    const port = chrome.runtime.connect({ name: "myPort" });
     port.postMessage({
       purpose: "setApiKey",
       value: value,
     });
 
-    // disconnect from connection
-    port.disconnect();
     setApiKey(value);
   }
 
   async function getStorageApiKey() {
-    const port = chrome.runtime.connect({ name: "myPort" });
     port.postMessage({ purpose: "getApiKey" });
-    port.onMessage.addListener((response) => {
-      setApiKey(response["MemApiKey"]);
-    });
-
-    // disconnect from connection
-    port.disconnect();
+    port.onMessage.addListener(
+      (response: { MemApiKey: string } | undefined) => {
+        setApiKey(response?.["MemApiKey"]);
+      }
+    );
   }
 
   if (loading)
