@@ -4,6 +4,8 @@ import {
   DocumentTextIcon,
   PencilIcon,
   TrashIcon,
+  ArrowLeftOnRectangleIcon,
+  ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 
 function App() {
@@ -14,6 +16,7 @@ function App() {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   const port = chrome.runtime.connect({ name: "myPort" });
 
@@ -136,16 +139,55 @@ function App() {
     );
   }
 
+  function SettingsPopup() {
+    if (!showSettings) return null;
+
+    return (
+      <div className="absolute z-50 bg-main mx-4 font-work-sans border-2 border-gray-300 rounded-b-md overflow-hidden">
+        <div className="w-full py-2 px-2">
+          <h3 className="font-bold text-xl">About Mem.AI</h3>
+          <p className="text-sm mt-1">
+            Mem is the world&apos;s first AI-powered workspace that&apos;s
+            personalized to you. Amplify your creativity, automate the mundane,
+            and stay organized automatically.
+          </p>
+        </div>
+        <a href="https://support.mem.ai" target="_blank" rel="noreferrer">
+          <div className="w-full border-gray-300 border-t-2 flex justify-start items-center gap-4 px-4 py-3 text-lg hover:bg-slate-200">
+            <ChatBubbleLeftRightIcon height="20px" width="20px" />
+            Contact Support
+          </div>
+        </a>
+        <button
+          className="w-full border-gray-300 border-t-2 flex justify-start items-center gap-4 px-4 py-3 text-lg hover:bg-slate-200 overflow-hidden"
+          onClick={() => {}}
+        >
+          <ArrowLeftOnRectangleIcon height="20px" width="20px" />
+          Log Out
+        </button>
+      </div>
+    );
+  }
+
   return (
     <main className="font-work-sans h-[600px] w-[350px] bg-main flex flex-col justify-between">
       <div className="overflow-y-auto h-[87%] ">
-        <nav className="w-full py-1 flex justify-between items-center bg-white px-4">
-          <button onClick={() => {}}>
+        <nav className="w-full py-1 flex justify-between items-center bg-white px-4 relative">
+          <button
+            onClick={() => {
+              setShowSettings(!showSettings);
+            }}
+          >
             <img
               src={NavLogo}
               alt="MemAI Logo Button"
               height="50px"
               width="50px"
+              className={
+                showSettings
+                  ? "transition-all duration-500 ease-in-out transform rotate-180"
+                  : "transition-all duration-500 ease-in-out transform rotate-0"
+              }
             />
           </button>
           <a
@@ -158,6 +200,9 @@ function App() {
             </div>
           </a>
         </nav>
+
+        <SettingsPopup />
+
         {/* Name, url, Tags */}
         <div className="mt-4 flex flex-col mx-4 text-header-text">
           {/* TODO: Button to edit the title, or auto-summarize */}
