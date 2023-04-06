@@ -7,6 +7,8 @@ import {
   ArrowLeftOnRectangleIcon,
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
+import { MemClient } from "@mem-labs/mem-node";
+import createMem from "./utils/createMem";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -18,6 +20,8 @@ function App() {
   const [description, setDescription] = useState<string>("");
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [signinErrorMsg, setSigninErrorMsg] = useState<string | null>("");
+  const [memClient, setMemClient] = useState<MemClient | undefined>(undefined);
+  const [memSucceeded, setMemSucceeded] = useState<boolean | null>(null); // Null = do not show. false = error, true = success
 
   const port = chrome.runtime.connect({ name: "myPort" });
 
@@ -52,6 +56,16 @@ function App() {
     getData();
   }, []);
 
+  useEffect(() => {
+    if (!apiKey) return;
+
+    const client = new MemClient({
+      apiAccessToken: apiKey,
+    });
+
+    setMemClient(client);
+  }, [apiKey]);
+
   async function setStorageApiKey() {
     port.postMessage({
       purpose: "setApiKey",
@@ -82,6 +96,17 @@ function App() {
     return (
       <main className="font-work-sans h-[600px] w-[350px]">Loading...</main>
     );
+
+  // Success or failure pages
+  if (memSucceeded !== null) {
+    if (memSucceeded == true) {
+      return <div>success, todo</div>;
+    }
+
+    if (memSucceeded == false) {
+      return <div>failure, todo</div>;
+    }
+  }
 
   if (!apiKey) {
     return (
@@ -313,7 +338,14 @@ function App() {
 
       {/* FOOTER, ADD MEM BUTTON */}
       <div className="mt-3 flex flex-col mx-4 text-header-text border-t border-t-header-text h-[13%]">
-        <button className="my-3 w-full rounded-md text-white py-3 text-xl bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red">
+        <button
+          className="my-3 w-full rounded-md text-white py-3 text-xl bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red"
+          onClick={() =>
+            createMem(memClient, tags, tab.title, tab.url, description)
+              .then(() => setMemSucceeded(true))
+              .catch(() => setMemSucceeded(false))
+          }
+        >
           Create Mem
         </button>
       </div>
