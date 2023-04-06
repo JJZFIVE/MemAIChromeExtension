@@ -9,6 +9,7 @@ import {
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [apiKey, setApiKey] = useState<string | undefined>("");
+  const [signinApiKey, setSigninApiKey] = useState<string>("");
   const [tab, setTab] = useState<any>({});
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState<string>("");
@@ -47,13 +48,13 @@ function App() {
     getData();
   }, []);
 
-  async function setStorageApiKey(value: string) {
+  async function setStorageApiKey() {
     port.postMessage({
       purpose: "setApiKey",
-      value: value,
+      value: signinApiKey,
     });
 
-    setApiKey(value);
+    setApiKey(signinApiKey);
   }
 
   async function getStorageApiKey() {
@@ -69,6 +70,71 @@ function App() {
     return (
       <main className="font-work-sans h-[600px] w-[350px]">Loading...</main>
     );
+
+  if (!apiKey) {
+    return (
+      <main className="font-work-sans h-[600px] w-[350px] bg-main flex flex-col items-center">
+        <nav className="w-full py-1 flex justify-between items-center bg-white px-4">
+          <button onClick={() => {}}>
+            <img
+              src={NavLogo}
+              alt="MemAI Logo Button"
+              height="50px"
+              width="50px"
+            />
+          </button>
+          <a
+            href="https://mem.ai/home/recents"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <div className="bg-button-dark rounded-md text-white px-3 py-1 text-center text-lg font-bold hover:opacity-90">
+              Dashboard
+            </div>
+          </a>
+        </nav>
+
+        <div className="flex flex-col items-center w-full px-4">
+          <img
+            src={NavLogo}
+            alt="Mem Logo"
+            height="200px"
+            width="200px"
+            className="mt-12 "
+          />
+
+          <h1 className="text-3xl mt-2">Welcome to Mem!</h1>
+
+          <input
+            className="mt-4 h-12 rounded-md border-2 border-gray-300 text-center text-sm font-bold bg-main w-full"
+            placeholder="Enter your MemAI API Key"
+            value={signinApiKey}
+            onChange={(e) => setSigninApiKey(e.target.value)}
+          />
+
+          <button
+            className="mt-4 w-full rounded-md text-white py-2 text-xl bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red"
+            onClick={async () => await setStorageApiKey()}
+          >
+            Unlock
+          </button>
+
+          <div className="flex mt-20 gap-1">
+            <p>Don&apos;t have a Mem API Key?</p>
+
+            <a
+              href="https://mem.ai/flows/api"
+              target="_blank"
+              rel="noreferrer"
+              className="text-mem-red hover:underline"
+            >
+              Get one here.
+            </a>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="font-work-sans h-[600px] w-[350px] bg-main flex flex-col justify-between">

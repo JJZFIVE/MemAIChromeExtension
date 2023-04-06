@@ -15,6 +15,7 @@ module.exports = {
         "uniswap-dark-gray-box-border": "#AEACB4",
         "header-text": "#33363F",
         "body-text": "#40424C",
+        "mem-red": "#E44A47",
       },
       backgroundColor: {
         main: "#F4F7F9",
