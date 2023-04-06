@@ -10,18 +10,6 @@ module.exports = {
         "work-sans": ["Work Sans"],
         inconsolata: ["Inconsolata"],
       },
-      colors: {
-        "uniswap-gray": "#737781",
-        "uniswap-dark-gray-box-border": "#AEACB4",
-        "header-text": "#33363F",
-        "body-text": "#40424C",
-      },
-      backgroundColor: {
-        main: "#F4F7F9",
-        "button-red": "#E44A47",
-        "button-purple": "#D83D81",
-        "button-dark": "#33363F",
-      },
     },
   },
   plugins: [],
