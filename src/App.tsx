@@ -120,7 +120,7 @@ function App() {
               className="bg-button-dark rounded-md text-white w-1/4 h-8 text-center text-sm hover:opacity-90 border"
               onClick={() => {
                 if (tagInput == "" || tags.includes("#" + tagInput)) return;
-                setTags([...tags, "#" + tagInput]);
+                setTags(["#" + tagInput, ...tags]);
                 setTagInput("");
               }}
             >
