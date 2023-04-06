@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { setStorageApiKey, getStorageApiKey } from "./utils/storage-fns";
+//import summarize from "text-summarization";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -20,11 +22,10 @@ function App() {
       setLoading(true);
 
       const tab = await getTabs();
-      console.log(tab);
       setTab(tab);
 
-      // Get API key from storage
-      await getStorageApiKey();
+      // Get and set API key from storage
+      await getStorageApiKey(port, setApiKey);
 
       setLoading(false);
 
@@ -36,24 +37,6 @@ function App() {
 
     getData();
   }, []);
-
-  async function setStorageApiKey(value: string) {
-    port.postMessage({
-      purpose: "setApiKey",
-      value: value,
-    });
-
-    setApiKey(value);
-  }
-
-  async function getStorageApiKey() {
-    port.postMessage({ purpose: "getApiKey" });
-    port.onMessage.addListener(
-      (response: { MemApiKey: string } | undefined) => {
-        setApiKey(response?.["MemApiKey"]);
-      }
-    );
-  }
 
   if (loading)
     return (
@@ -72,11 +55,15 @@ function App() {
 
       <p className="mt-2">{tab.url}</p>
       <p className="mt-2">{tab.title}</p>
-      <button onClick={async () => await setStorageApiKey("12345abcd")}>
+      <button
+        onClick={async () =>
+          await setStorageApiKey("12345abcd", port, setApiKey)
+        }
+      >
         SET STORAGE API KEY
       </button>
       <br />
-      <button onClick={async () => await getStorageApiKey()}>
+      <button onClick={async () => await getStorageApiKey(port, setApiKey)}>
         GET STORAGE API KEY
       </button>
       <br />
