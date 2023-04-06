@@ -5,6 +5,8 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [apiKey, setApiKey] = useState<string | undefined>("");
   const [tab, setTab] = useState<any>({});
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState<string>("");
 
   const port = chrome.runtime.connect({ name: "myPort" });
 
@@ -82,7 +84,7 @@ function App() {
 
       {/* Name, url, Tags */}
       <div className="mt-4 flex flex-col mx-4 text-header-text">
-        <h1 className="text-2xl">{tab.title}</h1>
+        <h1 className="text-2xl font-bold">{tab.title}</h1>
         <h2 className="text-xl mt-4">{tab.url}</h2>
 
         {/* Tag input */}
@@ -94,14 +96,35 @@ function App() {
             <input
               className="text-sm bg-tag w-full h-8 px-3 py-1 rounded-md text-body-text"
               placeholder="Tags"
-              onChange={(e) => {}}
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
             />
           </div>
-          <button className="bg-button-dark rounded-md text-white w-1/4 h-8 text-center text-sm hover:opacity-90">
+          <button
+            className="bg-button-dark rounded-md text-white w-1/4 h-8 text-center text-sm hover:opacity-90 border"
+            onClick={() => {
+              if (tagInput == "" || tags.includes("#" + tagInput)) return;
+              setTags([...tags, "#" + tagInput]);
+              setTagInput("");
+            }}
+          >
             + Tag
           </button>
         </div>
+
+        {/* Tags, scrollable in the x direction for overflow */}
+        <div className="mt-2 pb-4 flex flex-row overflow-x-auto gap-2">
+          {tags.map((tag: string) => (
+            <button
+              className="bg-tag rounded-md text-body-text px-3 py-1 text-center text-sm font-bold hover:opacity-70"
+              onClick={() => setTags(tags.filter((t) => t !== tag))}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
       </div>
+
       <p className="font-sans">
         Mem is the world's first AI-powered workspace that's personalized to
         you. Amplify your creativity, automate the mundane, and stay organized
