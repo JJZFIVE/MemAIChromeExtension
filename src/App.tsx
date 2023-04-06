@@ -60,6 +60,14 @@ function App() {
     setApiKey(signinApiKey);
   }
 
+  async function removeStorageApiKey() {
+    port.postMessage({
+      purpose: "removeApiKey",
+    });
+
+    setApiKey(undefined);
+  }
+
   async function getStorageApiKey() {
     port.postMessage({ purpose: "getApiKey" });
     port.onMessage.addListener(
@@ -160,7 +168,7 @@ function App() {
         </a>
         <button
           className="w-full border-gray-300 border-t-2 flex justify-start items-center gap-4 px-4 py-3 text-lg hover:bg-slate-200 overflow-hidden"
-          onClick={() => {}}
+          onClick={async () => await removeStorageApiKey()}
         >
           <ArrowLeftOnRectangleIcon height="20px" width="20px" />
           Log Out

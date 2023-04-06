@@ -37,3 +37,23 @@ chrome.runtime.onConnect.addListener((port) => {
     });
   }
 });
+
+// REMOVE KEY
+chrome.runtime.onConnect.addListener((port) => {
+  if (port.name === "myPort") {
+    port.onMessage.addListener((message) => {
+      if (message.purpose === "removeApiKey") {
+        chrome.storage.session.remove("MemApiKey", () => {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+            port.postMessage({
+              error: "An error occurred while removing the MemApiKey.",
+            });
+          } else {
+            port.postMessage("Removed api key");
+          }
+        });
+      }
+    });
+  }
+});
