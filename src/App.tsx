@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { setStorageApiKey, getStorageApiKey } from "./utils/storage-fns";
 //import summarize from "text-summarization";
 
 function App() {
@@ -7,32 +7,13 @@ function App() {
   const [apiKey, setApiKey] = useState<string | undefined>("");
   const [tab, setTab] = useState<any>({});
 
-  const port = chrome.runtime.connect({ name: "MemAIPortname" });
+  const port = chrome.runtime.connect({ name: "myPort" });
 
   async function getTabs() {
     let queryOptions = { active: true, lastFocusedWindow: true };
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
     let [tab] = await chrome.tabs.query(queryOptions);
     return tab;
-  }
-
-  async function setStorageApiKey(value: string) {
-    port.postMessage({
-      purpose: "setApiKey",
-      value: value,
-    });
-
-    setApiKey(value);
-  }
-
-  async function getStorageApiKey() {
-    port.postMessage({ purpose: "getApiKey" });
-    port.onMessage.addListener(
-      (response: { MemApiKey: string } | undefined) => {
-        console.log("RESPONSE", response);
-        setApiKey(response?.["MemApiKey"]);
-      }
-    );
   }
 
   useEffect(() => {
@@ -44,7 +25,7 @@ function App() {
       setTab(tab);
 
       // Get and set API key from storage
-      await getStorageApiKey();
+      await getStorageApiKey(port, setApiKey);
 
       setLoading(false);
 
@@ -74,11 +55,15 @@ function App() {
 
       <p className="mt-2">{tab.url}</p>
       <p className="mt-2">{tab.title}</p>
-      <button onClick={async () => await setStorageApiKey("12345abcd")}>
+      <button
+        onClick={async () =>
+          await setStorageApiKey("12345abcd", port, setApiKey)
+        }
+      >
         SET STORAGE API KEY
       </button>
       <br />
-      <button onClick={async () => await getStorageApiKey()}>
+      <button onClick={async () => await getStorageApiKey(port, setApiKey)}>
         GET STORAGE API KEY
       </button>
       <br />
