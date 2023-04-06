@@ -35,7 +35,7 @@ function App() {
       setTab(tab);
 
       // Get API key from storage
-      // await getStorageApiKey();
+      await getStorageApiKey();
 
       setLoading(false);
 
@@ -48,13 +48,13 @@ function App() {
     getData();
   }, []);
 
-  async function setStorageApiKey(value: string) {
+  async function setStorageApiKey() {
     port.postMessage({
       purpose: "setApiKey",
-      value: value,
+      value: signinApiKey,
     });
 
-    setApiKey(value);
+    setApiKey(signinApiKey);
   }
 
   async function getStorageApiKey() {
@@ -112,7 +112,10 @@ function App() {
             onChange={(e) => setSigninApiKey(e.target.value)}
           />
 
-          <button className="mt-4 w-full rounded-md text-white py-2 text-xl bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red">
+          <button
+            className="mt-4 w-full rounded-md text-white py-2 text-xl bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red"
+            onClick={async () => await setStorageApiKey()}
+          >
             Unlock
           </button>
 
