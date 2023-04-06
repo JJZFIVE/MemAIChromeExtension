@@ -10,7 +10,6 @@ chrome.runtime.onConnect.addListener((port) => {
               error: "An error occurred while setting the MemApiKey.",
             });
           } else {
-            console.log("set api key");
             port.postMessage("set api key");
           }
         });
@@ -31,7 +30,6 @@ chrome.runtime.onConnect.addListener((port) => {
               error: "An error occurred while retrieving the MemApiKey.",
             });
           } else {
-            console.log("RESULT1", result);
             port.postMessage(result);
           }
         });
