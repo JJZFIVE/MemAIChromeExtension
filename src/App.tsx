@@ -172,7 +172,7 @@ function App() {
 
       {/* FOOTER, ADD MEM BUTTON */}
       <div className="mt-3 flex flex-col mx-4 text-header-text border-t border-t-header-text h-[13%]">
-        <button className="my-3 w-full bg-button-red rounded-md text-white py-3 text-xl">
+        <button className="my-3 w-full rounded-md text-white py-3 text-xl bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red">
           Create Mem
         </button>
       </div>

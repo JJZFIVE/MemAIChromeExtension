@@ -23,6 +23,10 @@ module.exports = {
         "button-dark": "#33363F",
         tag: "#D9D9D9",
       },
+      gradientColorStops: {
+        "button-red": "#E44A47",
+        "button-purple": "#D83D81",
+      },
       animation: {
         fadeInSlow: "fadeIn 2s linear forwards",
         fadeInFast: "fadeIn 1.5s linear forwards",
