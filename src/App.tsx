@@ -17,6 +17,7 @@ function App() {
   const [tagInput, setTagInput] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [showSettings, setShowSettings] = useState<boolean>(false);
+  const [signinErrorMsg, setSigninErrorMsg] = useState<string | null>("");
 
   const port = chrome.runtime.connect({ name: "myPort" });
 
@@ -120,15 +121,30 @@ function App() {
             className="mt-4 h-12 rounded-md border-2 border-gray-300 text-center text-sm font-bold bg-main w-full"
             placeholder="Enter your MemAI API Key"
             value={signinApiKey}
-            onChange={(e) => setSigninApiKey(e.target.value)}
+            onChange={(e) => {
+              setSigninErrorMsg(null);
+              setSigninApiKey(e.target.value);
+            }}
           />
 
-          <button
-            className="mt-4 w-full rounded-md text-white py-2 text-xl bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red"
-            onClick={async () => await setStorageApiKey()}
-          >
-            Unlock
-          </button>
+          <div className="mt-4 w-full">
+            <button
+              className="w-full rounded-md text-white py-2 text-xl bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red"
+              onClick={async () => {
+                if (signinApiKey.length < 25) {
+                  setSigninErrorMsg("Error: Invalid API Key");
+                  return;
+                }
+                await setStorageApiKey();
+              }}
+            >
+              Unlock
+            </button>
+
+            <p className="text-red-500 text-sm h-4 pt-2 text-center">
+              {signinErrorMsg}
+            </p>
+          </div>
 
           <div className="flex mt-20 gap-1">
             <p>Don&apos;t have a Mem API Key?</p>
@@ -153,11 +169,17 @@ function App() {
     return (
       <div className="absolute z-50 bg-main mx-4 font-work-sans border-2 border-gray-300 rounded-b-md overflow-hidden">
         <div className="w-full py-2 px-2">
-          <h3 className="font-bold text-xl">About Mem.AI</h3>
+          <h3 className="font-bold text-2xl">About Mem.AI</h3>
           <p className="text-sm mt-1">
             Mem is the world&apos;s first AI-powered workspace that&apos;s
             personalized to you. Amplify your creativity, automate the mundane,
             and stay organized automatically.
+          </p>
+          <p className="text-sm mt-2 opacity-60">
+            Api Key:{" "}
+            {apiKey
+              ? `${apiKey?.slice(0, 7)}` + "..."
+              : "Error: No API Key Found. Please Log Out."}
           </p>
         </div>
         <a href="https://support.mem.ai" target="_blank" rel="noreferrer">
