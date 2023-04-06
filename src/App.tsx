@@ -71,103 +71,119 @@ function App() {
     );
 
   return (
-    <main className="font-work-sans h-[600px] w-[350px] bg-main">
-      {/* TODO: ADD AN OVERFLOW SCROLL Y SECTION, AND STICKY +ADD BUTTON ON BOTTOM */}
-      <nav className="w-full py-1 flex justify-between items-center bg-white px-4">
-        <button onClick={() => {}}>
-          <img
-            src={NavLogo}
-            alt="MemAI Logo Button"
-            height="50px"
-            width="50px"
-          />
-        </button>
-        <a href="https://mem.ai/home/recents" target="_blank" rel="noreferrer">
-          <div className="bg-button-dark rounded-md text-white px-3 py-1 text-center text-lg font-bold hover:opacity-90">
-            Dashboard
-          </div>
-        </a>
-      </nav>
-
-      {/* Name, url, Tags */}
-      <div className="mt-4 flex flex-col mx-4 text-header-text">
-        {/* TODO: Button to edit the title, or auto-summarize */}
-        <h1 className="text-2xl font-bold">{tab.title}</h1>
-        {/* TODO: truncate with ellipsis this url */}
-        <h2 className="text-lg mt-2">{tab.url}</h2>
-
-        {/* Tag input */}
-        <div
-          className={`flex flex-row justify-between gap-5 items-center ${
-            tags.length == 0 && "mb-3"
-          }`}
-        >
-          <div className="relative my-2 w-2/3 border justify-center flex items-center rounded-md shadow-md bg-tag">
-            <div className="w-8 text-center text-body-text text-lg border-r border-gray-400">
-              #
-            </div>
-            <input
-              className="text-sm bg-tag w-full h-8 px-3 py-1 rounded-md text-body-text"
-              placeholder="Tags"
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
+    <main className="font-work-sans h-[600px] w-[350px] bg-main flex flex-col justify-between">
+      <div className="overflow-y-auto h-[87%] ">
+        <nav className="w-full py-1 flex justify-between items-center bg-white px-4">
+          <button onClick={() => {}}>
+            <img
+              src={NavLogo}
+              alt="MemAI Logo Button"
+              height="50px"
+              width="50px"
             />
-          </div>
-          <button
-            className="bg-button-dark rounded-md text-white w-1/4 h-8 text-center text-sm hover:opacity-90 border"
-            onClick={() => {
-              if (tagInput == "" || tags.includes("#" + tagInput)) return;
-              setTags([...tags, "#" + tagInput]);
-              setTagInput("");
-            }}
-          >
-            + Tag
           </button>
-        </div>
+          <a
+            href="https://mem.ai/home/recents"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <div className="bg-button-dark rounded-md text-white px-3 py-1 text-center text-lg font-bold hover:opacity-90">
+              Dashboard
+            </div>
+          </a>
+        </nav>
+        {/* Name, url, Tags */}
+        <div className="mt-4 flex flex-col mx-4 text-header-text">
+          {/* TODO: Button to edit the title, or auto-summarize */}
+          <h1 className="text-2xl font-bold">{tab.title}</h1>
+          {/* TODO: truncate with ellipsis this url */}
+          <h2 className="text-lg mt-2">{tab.url}</h2>
 
-        {/* Tags, scrollable in the x direction for overflow */}
-        {tags.length > 0 && (
-          <div className="mt-2 pb-4 flex flex-row overflow-x-auto gap-2">
-            {tags.map((tag: string) => (
+          {/* Tag input */}
+          <div
+            className={`flex flex-row justify-between gap-5 items-center ${
+              tags.length == 0 && "mb-3"
+            }`}
+          >
+            <div className="relative my-2 w-2/3 border justify-center flex items-center rounded-md shadow-md bg-tag">
+              <div className="w-8 text-center text-body-text text-lg border-r border-gray-400">
+                #
+              </div>
+              <input
+                className="text-sm bg-tag w-full h-8 px-3 py-1 rounded-md text-body-text"
+                placeholder="Tags"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+              />
+            </div>
+            <button
+              className="bg-button-dark rounded-md text-white w-1/4 h-8 text-center text-sm hover:opacity-90 border"
+              onClick={() => {
+                if (tagInput == "" || tags.includes("#" + tagInput)) return;
+                setTags([...tags, "#" + tagInput]);
+                setTagInput("");
+              }}
+            >
+              + Tag
+            </button>
+          </div>
+
+          {/* Tags, scrollable in the x direction for overflow */}
+          {tags.length > 0 && (
+            <div className="mt-2 pb-4 flex flex-row overflow-x-auto gap-2">
+              {tags.map((tag: string) => (
+                <button
+                  className="bg-tag rounded-md text-body-text px-3 py-1 text-center text-sm font-bold hover:opacity-70"
+                  onClick={() => setTags(tags.filter((t) => t !== tag))}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        {/* Description section */}
+        <div className="pt-3 flex flex-col mx-4 text-header-text border-t border-t-header-text">
+          <div className="flex w-full justify-between">
+            {[
+              { name: "Normal", icon: PencilIcon },
+              { name: "Summarize", icon: DocumentTextIcon },
+              { name: "Clear", icon: TrashIcon },
+            ].map((mode) => (
               <button
-                className="bg-tag rounded-md text-body-text px-3 py-1 text-center text-sm font-bold hover:opacity-70"
-                onClick={() => setTags(tags.filter((t) => t !== tag))}
+                className="px-2 py-1 gap-2 text-sm border border-gray-200 rounded-md font-bold hover:bg-slate-200 flex items-center "
+                onClick={() => {}}
               >
-                {tag}
+                <mode.icon width="16" height="16" />
+                {mode.name}
               </button>
             ))}
           </div>
-        )}
-      </div>
 
-      {/* Description section */}
-      <div className="pt-3 flex flex-col mx-4 text-header-text border-t border-t-header-text">
-        <div className="flex w-full justify-between">
-          {[
-            { name: "Normal", icon: PencilIcon },
-            { name: "Summarize", icon: DocumentTextIcon },
-            { name: "Clear", icon: TrashIcon },
-          ].map((mode) => (
-            <button
-              className="px-2 py-1 gap-2 text-sm border border-gray-200 rounded-md font-bold hover:bg-slate-200 flex items-center "
-              onClick={() => {}}
-            >
-              <mode.icon width="16" height="16" />
-              {mode.name}
-            </button>
-          ))}
+          {/* Input box */}
+          <textarea
+            className="w-full h-32 mt-3 px-3 py-2 rounded-md text-body-text text-sm bg-main border border-gray-200"
+            placeholder="Add Description..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
         </div>
-
-        {/* Input box */}
-        <textarea
-          className="w-full h-32 mt-3 px-3 py-2 rounded-md text-body-text text-sm bg-main border border-gray-200"
-          placeholder="Add Description..."
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
       </div>
 
-      <button onClick={async () => await setStorageApiKey("12345abcd")}>
+      {/* FOOTER, ADD MEM BUTTON */}
+      <div className="mt-3 flex flex-col mx-4 text-header-text border-t border-t-header-text h-[13%]">
+        <button className="my-3 w-full bg-button-red rounded-md text-white py-3 text-xl">
+          Create Mem
+        </button>
+      </div>
+    </main>
+  );
+}
+
+export default App;
+
+{
+  /* <button onClick={async () => await setStorageApiKey("12345abcd")}>
         SET STORAGE API KEY
       </button>
       <br />
@@ -176,9 +192,5 @@ function App() {
       </button>
       <br />
 
-      <p>APIKEY: {apiKey}</p>
-    </main>
-  );
+      <p>APIKEY: {apiKey}</p> */
 }
-
-export default App;
