@@ -25,6 +25,8 @@ function App() {
   const [memClient, setMemClient] = useState<MemClient | undefined>(undefined);
   const [memSucceeded, setMemSucceeded] = useState<boolean | null>(null); // Null = do not show. false = error, true = success
   const [pageText, setPageText] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [editingTitle, setEditingTitle] = useState<boolean>(false);
 
   const port = chrome.runtime.connect({ name: "myPort" });
 
@@ -44,6 +46,7 @@ function App() {
       const tab = await getTabs();
       console.log(tab);
       setTab(tab);
+      setTitle(tab?.title ? tab?.title : "No Title Found");
 
       // Get API key from storage
       await getStorageApiKey();
@@ -279,9 +282,49 @@ function App() {
 
         {/* Name, url, Tags */}
         <div className="mt-4 flex flex-col mx-4 text-header-text">
-          {/* TODO: Button to edit the title, or auto-summarize */}
-          <button>Summarize Title</button>
-          <h1 className="text-2xl font-bold">{tab.title}</h1>
+          <div className="flex gap-1">
+            {/* Edit button */}
+            <button
+              className="hover:bg-slate-200 py-1 pr-1 rounded-md text-xs w-fit"
+              onClick={() => {
+                setEditingTitle(!editingTitle);
+              }}
+            >
+              {editingTitle ? "Done" : "Edit"}
+            </button>
+
+            {/* Summarize button */}
+            <button
+              className="hover:bg-slate-200 py-1 px-1 rounded-md text-xs w-fit"
+              onClick={async () => {
+                setTitle("Summarizing...");
+                try {
+                  // Check if page text is too long, in which case just take the first 2000 characters
+
+                  const summary = await axios
+                    .post(SUMMARIZE_TITLE_URL, {
+                      message: title,
+                    })
+                    .then((res) => res.data.response);
+
+                  setTitle(summary);
+                } catch (error) {
+                  setTitle("Error summarizing.");
+                }
+              }}
+            >
+              Summarize
+            </button>
+          </div>
+          {!editingTitle ? (
+            <h1 className="text-lg font-bold">{title}</h1>
+          ) : (
+            <input
+              className="text-lg font-bold w-full p-2"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          )}
           {/* TODO: truncate with ellipsis this url */}
           <h2 className="text-sm mt-2 truncate">{tab.url}</h2>
 
@@ -398,7 +441,7 @@ function App() {
         <button
           className="my-3 w-full rounded-md text-white py-3 text-xl bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red"
           onClick={() =>
-            createMem(memClient, tags, tab.title, tab.url, description)
+            createMem(memClient, tags, title, tab.url, description)
               .then(() => setMemSucceeded(true))
               .catch(() => setMemSucceeded(false))
           }
