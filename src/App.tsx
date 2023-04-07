@@ -282,10 +282,10 @@ function App() {
 
         {/* Name, url, Tags */}
         <div className="mt-4 flex flex-col mx-4 text-header-text">
-          <div className="flex gap-1">
+          <div className="flex gap-3">
             {/* Edit button */}
             <button
-              className="hover:bg-slate-200 py-1 px-1 rounded-md text-xs w-fit"
+              className="hover:underline rounded-md text-xs w-fit"
               onClick={() => {
                 setEditingTitle(!editingTitle);
               }}
@@ -295,7 +295,7 @@ function App() {
 
             {/* Summarize button */}
             <button
-              className="hover:bg-slate-200 py-1 px-1 rounded-md text-xs w-fit"
+              className="hover:underline rounded-md text-xs w-fit"
               onClick={async () => {
                 setTitle("Summarizing...");
                 try {
@@ -317,10 +317,10 @@ function App() {
             </button>
           </div>
           {!editingTitle ? (
-            <h1 className="text-lg font-bold">{title}</h1>
+            <h1 className="text-lg font-bold mt-1">{title}</h1>
           ) : (
             <input
-              className="text-lg font-bold w-full p-2"
+              className="text-lg font-bold w-full p-2 mt-1"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
