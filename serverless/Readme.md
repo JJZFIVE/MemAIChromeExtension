@@ -1,2 +1,2 @@
 - To zip for lambda upload: `zip -r function.zip .`
-- Deploy with handler value = `FILENAME_WITHOUT_JS.handler`
+- Deploy to AWS Lambda, and set the handler value = `FILENAME_WITHOUT_JS.handler`
