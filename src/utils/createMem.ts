@@ -9,9 +9,9 @@ const createMem = async (
     throw new Error("No memClient provided");
   }
 
-  let expandedTags = tags.join(" ");
+  let expandedTags = tags.map((tag) => tag.replace(/ /g, "_")).join(" ");
 
-  let content = `# ${title} \n\n##${url} \n\n###Tags: ${expandedTags} \n\n${description}`;
+  let content = `# ${title} \n\n${url} \n\n### Tags: ${expandedTags} \n\n${description}`;
 
   memClient.createMem({
     content: content,
