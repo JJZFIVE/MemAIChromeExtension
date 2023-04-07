@@ -280,6 +280,7 @@ function App() {
         {/* Name, url, Tags */}
         <div className="mt-4 flex flex-col mx-4 text-header-text">
           {/* TODO: Button to edit the title, or auto-summarize */}
+          <button>Summarize Title</button>
           <h1 className="text-2xl font-bold">{tab.title}</h1>
           {/* TODO: truncate with ellipsis this url */}
           <h2 className="text-sm mt-2 truncate">{tab.url}</h2>
@@ -335,7 +336,7 @@ function App() {
                 name: "All",
                 icon: PencilIcon,
                 func: () => {
-                  setDescription(pageText);
+                  setDescription(pageText.trim());
                 },
               },
               {
@@ -358,7 +359,6 @@ function App() {
 
                     setDescription(summary);
                   } catch (error) {
-                    console.log(error);
                     setDescription(
                       "Error summarizing. Page text might be too long."
                     );
