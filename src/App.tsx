@@ -11,6 +11,7 @@ import { MemClient } from "@mem-labs/mem-node";
 import createMem from "./utils/createMem";
 import axios from "axios";
 import { SUMMARIZE_BODY_URL, SUMMARIZE_TITLE_URL } from "./constants";
+import Navbar from "./components/Navbar";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -144,25 +145,11 @@ function App() {
   if (!apiKey) {
     return (
       <main className="font-work-sans h-[600px] w-[350px] bg-main flex flex-col items-center">
-        <nav className="w-full py-1 flex justify-between items-center bg-white px-4">
-          <button onClick={() => {}}>
-            <img
-              src={NavLogo}
-              alt="MemAI Logo Button"
-              height="50px"
-              width="50px"
-            />
-          </button>
-          <a
-            href="https://mem.ai/home/recents"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div className="bg-button-dark rounded-md text-white px-3 py-1 text-center text-lg font-bold hover:opacity-90">
-              Dashboard
-            </div>
-          </a>
-        </nav>
+        <Navbar
+          showSettings={showSettings}
+          setShowSettings={setShowSettings}
+          allowShowSettings={false}
+        />
 
         <div className="flex flex-col items-center w-full px-4">
           <img
@@ -259,36 +246,12 @@ function App() {
 
   return (
     <main className="font-work-sans h-[600px] w-[350px] bg-main flex flex-col justify-between">
+      <Navbar
+        showSettings={showSettings}
+        setShowSettings={setShowSettings}
+        allowShowSettings={true}
+      />
       <div className="overflow-y-auto h-[87%] ">
-        <nav className="w-full py-1 flex justify-between items-center bg-white px-4 relative">
-          <button
-            onClick={() => {
-              setShowSettings(!showSettings);
-            }}
-          >
-            <img
-              src={NavLogo}
-              alt="MemAI Logo Button"
-              height="50px"
-              width="50px"
-              className={
-                showSettings
-                  ? "transition-all duration-500 ease-in-out transform rotate-180"
-                  : "transition-all duration-500 ease-in-out transform rotate-0"
-              }
-            />
-          </button>
-          <a
-            href="https://mem.ai/home/recents"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div className="bg-button-dark rounded-md text-white px-3 py-1 text-center text-lg font-bold hover:opacity-90">
-              Dashboard
-            </div>
-          </a>
-        </nav>
-
         <SettingsPopup />
 
         {/* Name, url, Tags */}
