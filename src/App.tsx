@@ -45,6 +45,18 @@ function App() {
       // Get API key from storage
       await getStorageApiKey();
 
+      // Get contents of page
+      console.log("TAB ID: ", tab.id);
+
+      chrome.scripting
+        .executeScript({
+          target: { tabId: tab.id as number },
+          func: () => {
+            return document.body.innerText;
+          },
+        })
+        .then(([data]) => console.log("injected a function", data.result));
+
       setLoading(false);
 
       return () => {
