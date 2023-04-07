@@ -1,0 +1,2 @@
+- To zip for lambda upload: `zip -r function.zip .`
+- Deploy with handler value = `FILENAME_WITHOUT_JS.handler`

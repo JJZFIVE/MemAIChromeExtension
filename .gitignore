@@ -11,6 +11,10 @@
 # production
 /build
 
+# Serverless directories
+serverless/node_modules
+serverless/function.zip
+
 # misc
 .DS_Store
 .env.local

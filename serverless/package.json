@@ -1,0 +1,8 @@
+{
+  "name": "memai-serverless",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "openai": "^3.2.1"
+  }
+}

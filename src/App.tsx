@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { MemClient } from "@mem-labs/mem-node";
 import createMem from "./utils/createMem";
+import axios from "axios";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -339,7 +340,14 @@ function App() {
               {
                 name: "Summarize",
                 icon: DocumentTextIcon,
-                func: () => {
+                func: async () => {
+                  const res = await axios.post(
+                    "https://u47ywgl6gj.execute-api.us-east-1.amazonaws.com/default/MemAiSummarizerBody",
+                    {
+                      message: pageText,
+                    }
+                  );
+
                   setDescription(
                     "Could not find a good package that summarizes well that would work in a browser extension. Ran out of time :)"
                   );
