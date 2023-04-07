@@ -10,8 +10,10 @@ const createMem = async (
   }
 
   let expandedTags = tags.map((tag) => tag.replace(/ /g, "_")).join(" ");
+  let tagSentence =
+    expandedTags.length > 0 ? `### Tags: ${expandedTags} \n\n` : "";
 
-  let content = `# ${title} \n\n${url} \n\n### Tags: ${expandedTags} \n\n${description}`;
+  let content = `# ${title} \n\n${url} \n\n${tagSentence}${description}`;
 
   memClient.createMem({
     content: content,
