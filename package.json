@@ -1,5 +1,5 @@
 {
-  "name": "memaichromeextension",
+  "name": "mem-ai-chrome-extension",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

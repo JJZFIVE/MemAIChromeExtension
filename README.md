@@ -1,46 +1,49 @@
-# Getting Started with Create React App
+# MemAI Chrome Extension by Joe Zakielarz
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a Chrome extension that allows you to use the MemAI API to generate mems from any website. It's my application for the MemAI Take Home Project.
 
-## Available Scripts
+## Installation
 
-In the project directory, you can run:
+1. Install node.js, npm, and yarn. Yarn installation: npm install --global yarn
+1. Install dependencies with `yarn install`
+1. Run `yarn build` to build the extension
+1. Go to chrome://extensions
+1. Enable developer mode
+1. Click "Load unpacked", and select the `build` folder
 
-### `yarn start`
+## Descriptions
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+My goal was to make the extension as similar in feel and design to the Mem website as possible, and I feel like I accomplished that. I put a lot of emphasis on a simple and intuitive UI. I used Figma to wireframe the design beforehand. [You can check out my Figma here.](https://www.figma.com/file/BcrF1zw1ASIIShQtK1FiOi/MemAI-Chrome-Extension?node-id=0%3A1&t=vwewzeNsZI0PYkkP-1) I copied the same colors and used the same font that Mem uses on their website (Work Sans).
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+The extension is built with React and TypeScript. The most challenging part of this project was connecting the extension to the main Chrome storage and scripting so that I could save the API key and use it in the background script. I wound up figuring out that the "background" script is the only script that can access the Chrome storage, so I set up listeners in the background script that set, get, and remove the API key in Chrome storage. Just to note, I used the chrome.runtime.session API, which encrypts the api key.
 
-### `yarn test`
+The other most challening part was getting the text on the page. It wound up being a simple call to the chrome.scripting.executeScript API, however I was playing a lot with content scripts and the background script.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Features
 
-### `yarn build`
+- Generate a mem from any website
+- Save your API key
+- Easy link to your Mem Dashboard
+- Add an unlimited amount of tags
+- Edit the title and description of the mem
+- GPT 3.5 description summarization
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Serverless functions on AWS Lambda
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+This extension uses two serverless functions, one to summarize the description, and the other for the title. Both functions plug into the GPT 3.5 API to summarize the text. The reason for these functions is that it'd be a bad idea to expose your OpenAI API key in the extension itself, as anyone could just read the network traffic and see your key and exploit you. Instead, I segmented the OpenAI request into these functions so that users cannot steal your OpenAI API key. The functions are written in NodeJS and deployed to AWS Lambda with an API Gateway trigger, however they could be deployed on any serverless platform.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## License
 
-### `yarn eject`
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## About me
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+I'm a junior at Duke studying Computer Science and Mechanical Engineering. I'm a full stack developer with experience in React, Node.js, Python, SQL, and Solidity (blockchain). Last summer, I singlehandedly designed, built, and deployed an [NFT Marketplace](https://degen-marketplace.vercel.app). I co-founded [University Shipping](https://www.universityshipping.com/), a shipping and storage company, that services over 200 Duke students every year. I'm also a huge fan of snowboarding, reading, and [DJing](https://soundcloud.com/intrynzic/one-more-time-demo?si=9cddcb1a1ec54d31accabf857a82cdd4&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Lastly, I'm super excited about potentially interning for Mem this summer! Thanks for the opportunity to build this extension!
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+[Personal Website](https://www.z5technologies.com/)
 
-## Learn More
+[Resume](https://drive.google.com/file/d/1fy01XbANUqzvaCpqjI3EpD-lsXQiViK1/view?usp=sharing)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+[GitHub](https://github.com/JJZFIVE)
