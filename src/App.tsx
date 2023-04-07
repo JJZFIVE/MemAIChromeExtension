@@ -6,12 +6,16 @@ import {
   TrashIcon,
   ArrowLeftOnRectangleIcon,
   ChatBubbleLeftRightIcon,
+  CheckCircleIcon,
+  XCircleIcon,
 } from "@heroicons/react/24/outline";
 import { MemClient } from "@mem-labs/mem-node";
 import createMem from "./utils/createMem";
 import axios from "axios";
 import { SUMMARIZE_BODY_URL, SUMMARIZE_TITLE_URL } from "./constants";
 import Navbar from "./components/Navbar";
+import PuffLoader from "react-spinners/PuffLoader";
+// import wait from "wait";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -126,22 +130,6 @@ function App() {
     );
   }
 
-  if (loading)
-    return (
-      <main className="font-work-sans h-[600px] w-[350px]">Loading...</main>
-    );
-
-  // Success or failure pages
-  if (memSucceeded !== null) {
-    if (memSucceeded == true) {
-      return <div>success, todo</div>;
-    }
-
-    if (memSucceeded == false) {
-      return <div>failure, todo</div>;
-    }
-  }
-
   if (!apiKey) {
     return (
       <main className="font-work-sans h-[600px] w-[350px] bg-main flex flex-col items-center">
@@ -251,175 +239,230 @@ function App() {
         setShowSettings={setShowSettings}
         allowShowSettings={true}
       />
-      <div className="overflow-y-auto h-[87%] ">
-        <SettingsPopup />
 
-        {/* Name, url, Tags */}
-        <div className="mt-4 flex flex-col mx-4 text-header-text">
-          <div className="flex gap-3">
-            {/* Edit button */}
-            <button
-              className="hover:underline rounded-md text-xs w-fit"
-              onClick={() => {
-                setEditingTitle(!editingTitle);
-              }}
-            >
-              {editingTitle ? "Done" : "Edit"}
-            </button>
+      {/* Normal body */}
+      {memSucceeded === null && !loading && (
+        <div className="overflow-y-auto h-[87%] ">
+          <SettingsPopup />
 
-            {/* Summarize button */}
-            <button
-              className="hover:underline rounded-md text-xs w-fit"
-              onClick={async () => {
-                setTitle("Summarizing...");
-                try {
-                  // Check if page text is too long, in which case just take the first 2000 characters
+          {/* Name, url, Tags */}
+          <div className="mt-4 flex flex-col mx-4 text-header-text">
+            <div className="flex gap-3">
+              {/* Edit button */}
+              <button
+                className="hover:underline rounded-md text-xs w-fit"
+                onClick={() => {
+                  setEditingTitle(!editingTitle);
+                }}
+              >
+                {editingTitle ? "Done" : "Edit"}
+              </button>
 
-                  const summary = await axios
-                    .post(SUMMARIZE_TITLE_URL, {
-                      message: title,
-                    })
-                    .then((res) => res.data.response);
-
-                  setTitle(summary);
-                } catch (error) {
-                  setTitle("Error summarizing.");
-                }
-              }}
-            >
-              Summarize
-            </button>
-          </div>
-          {!editingTitle ? (
-            <h1 className="text-lg font-bold mt-1">{title}</h1>
-          ) : (
-            <input
-              className="text-lg font-bold w-full p-2 mt-1"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          )}
-          {/* TODO: truncate with ellipsis this url */}
-          <h2 className="text-sm mt-2 truncate">{tab.url}</h2>
-
-          {/* Tag input */}
-          <div
-            className={`flex flex-row justify-between gap-5 items-center ${
-              tags.length == 0 && "mb-3"
-            }`}
-          >
-            <div className="relative my-2 w-2/3 border justify-center flex items-center rounded-md shadow-md bg-tag">
-              <div className="w-8 text-center text-body-text text-lg border-r border-gray-400">
-                #
-              </div>
-              <input
-                className="text-sm bg-tag w-full h-8 px-3 py-1 rounded-md text-body-text"
-                placeholder="Tags"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-              />
-            </div>
-            <button
-              className="bg-button-dark rounded-md text-white w-1/4 h-8 text-center text-sm hover:opacity-90 border"
-              onClick={setNewTag}
-            >
-              + Tag
-            </button>
-          </div>
-
-          {/* Tags, scrollable in the x direction for overflow */}
-          {tags.length > 0 && (
-            <div className="mt-2 pb-4 flex flex-row overflow-x-auto gap-2">
-              {tags.map((tag: string) => (
-                <button
-                  className="bg-tag rounded-md text-body-text px-3 py-1 text-center text-sm font-bold hover:opacity-70"
-                  onClick={() => setTags(tags.filter((t) => t !== tag))}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-        {/* Description section */}
-        <div className="pt-3 flex flex-col mx-4 text-header-text border-t border-t-header-text">
-          <div className="flex w-full justify-between">
-            {[
-              {
-                name: "All",
-                icon: PencilIcon,
-                func: () => {
-                  setDescription(pageText.trim());
-                },
-              },
-              {
-                name: "Summarize",
-                icon: DocumentTextIcon,
-                func: async () => {
-                  setDescription("Summarizing...");
+              {/* Summarize button */}
+              <button
+                className="hover:underline rounded-md text-xs w-fit"
+                onClick={async () => {
+                  setTitle("Summarizing...");
                   try {
                     // Check if page text is too long, in which case just take the first 2000 characters
-                    const pageTextToSummarize =
-                      pageText.length > 1000
-                        ? pageText.slice(0, 2000)
-                        : pageText;
 
                     const summary = await axios
-                      .post(SUMMARIZE_BODY_URL, {
-                        message: pageTextToSummarize,
+                      .post(SUMMARIZE_TITLE_URL, {
+                        message: title,
                       })
                       .then((res) => res.data.response);
 
-                    setDescription(summary);
+                    setTitle(summary);
                   } catch (error) {
-                    setDescription(
-                      "Error summarizing. Page text might be too long."
-                    );
+                    setTitle("Error summarizing.");
                   }
-                },
-              },
-              {
-                name: "Clear",
-                icon: TrashIcon,
-                func: () => {
-                  setDescription("");
-                },
-              },
-            ].map((mode) => (
-              <button
-                className="px-2 py-1 gap-2 text-sm border border-gray-200 rounded-md font-bold hover:bg-slate-200 flex items-center "
-                onClick={mode.func}
+                }}
               >
-                <mode.icon width="16" height="16" />
-                {mode.name}
+                Summarize
               </button>
-            ))}
-          </div>
+            </div>
+            {!editingTitle ? (
+              <h1 className="text-lg font-bold mt-1">{title}</h1>
+            ) : (
+              <input
+                className="text-lg font-bold w-full p-2 mt-1"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            )}
+            {/* TODO: truncate with ellipsis this url */}
+            <h2 className="text-sm mt-2 truncate">{tab.url}</h2>
 
-          {/* Input box */}
-          <textarea
-            className="w-full h-40 mt-3 px-3 py-2 rounded-md text-body-text text-sm bg-main border border-gray-200"
-            placeholder="Add Description..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
+            {/* Tag input */}
+            <div
+              className={`flex flex-row justify-between gap-5 items-center ${
+                tags.length == 0 && "mb-3"
+              }`}
+            >
+              <div className="relative my-2 w-2/3 border justify-center flex items-center rounded-md shadow-md bg-tag">
+                <div className="w-8 text-center text-body-text text-lg border-r border-gray-400">
+                  #
+                </div>
+                <input
+                  className="text-sm bg-tag w-full h-8 px-3 py-1 rounded-md text-body-text"
+                  placeholder="Tags"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
+              <button
+                className="bg-button-dark rounded-md text-white w-1/4 h-8 text-center text-sm hover:opacity-90 border"
+                onClick={setNewTag}
+              >
+                + Tag
+              </button>
+            </div>
+
+            {/* Tags, scrollable in the x direction for overflow */}
+            {tags.length > 0 && (
+              <div className="mt-2 pb-4 flex flex-row overflow-x-auto gap-2">
+                {tags.map((tag: string) => (
+                  <button
+                    className="bg-tag rounded-md text-body-text px-3 py-1 text-center text-sm font-bold hover:opacity-70"
+                    onClick={() => setTags(tags.filter((t) => t !== tag))}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          {/* Description section */}
+          <div className="pt-3 flex flex-col mx-4 text-header-text border-t border-t-header-text">
+            <div className="flex w-full justify-between">
+              {[
+                {
+                  name: "All",
+                  icon: PencilIcon,
+                  func: () => {
+                    setDescription(pageText.trim());
+                  },
+                },
+                {
+                  name: "Summarize",
+                  icon: DocumentTextIcon,
+                  func: async () => {
+                    setDescription("Summarizing...");
+                    try {
+                      // Check if page text is too long, in which case just take the first 2000 characters
+                      const pageTextToSummarize =
+                        pageText.length > 1000
+                          ? pageText.slice(0, 2000)
+                          : pageText;
+
+                      const summary = await axios
+                        .post(SUMMARIZE_BODY_URL, {
+                          message: pageTextToSummarize,
+                        })
+                        .then((res) => res.data.response);
+
+                      setDescription(summary);
+                    } catch (error) {
+                      setDescription(
+                        "Error summarizing. Page text might be too long."
+                      );
+                    }
+                  },
+                },
+                {
+                  name: "Clear",
+                  icon: TrashIcon,
+                  func: () => {
+                    setDescription("");
+                  },
+                },
+              ].map((mode) => (
+                <button
+                  className="px-2 py-1 gap-2 text-sm border border-gray-200 rounded-md font-bold hover:bg-slate-200 flex items-center "
+                  onClick={mode.func}
+                >
+                  <mode.icon width="16" height="16" />
+                  {mode.name}
+                </button>
+              ))}
+            </div>
+
+            {/* Input box */}
+            <textarea
+              className="w-full h-40 mt-3 px-3 py-2 rounded-md text-body-text text-sm bg-main border border-gray-200"
+              placeholder="Add Description..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* If mem succeeded */}
+      {memSucceeded === true && (
+        <div className="flex flex-col items-center justify-center h-full mx-8">
+          <CheckCircleIcon className="h-20 w-20 text-green-500" />
+          <h1 className="text-2xl font-bold mt-3">Mem created!</h1>
+          <button
+            className="my-3 w-full rounded-md text-white py-3 text-lg bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red"
+            onClick={() => {
+              setMemSucceeded(null);
+              setDescription("");
+              setTags([]);
+            }}
+          >
+            Create Another Mem
+          </button>
+        </div>
+      )}
+
+      {memSucceeded === false && (
+        <div className="flex flex-col items-center justify-center h-full mx-8">
+          <XCircleIcon className="h-20 w-20 text-red-500" />
+          <h1 className="text-2xl font-bold mt-3">Could not create mem!</h1>
+          <button
+            className="my-3 w-full rounded-md text-white py-3 text-xl bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red"
+            onClick={() => {
+              setMemSucceeded(null);
+              setDescription("");
+              setTags([]);
+            }}
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+
+      {loading && (
+        <div className="flex justify-center h-full items-center">
+          <PuffLoader color={"#E44A47"} />
+        </div>
+      )}
 
       {/* FOOTER, ADD MEM BUTTON */}
-      <div className="mt-3 flex flex-col mx-4 text-header-text border-t border-t-header-text h-[13%]">
-        <button
-          className="my-3 w-full rounded-md text-white py-3 text-xl bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red"
-          onClick={() =>
-            createMem(memClient, tags, title, tab.url, description)
-              .then(() => setMemSucceeded(true))
-              .catch(() => setMemSucceeded(false))
-          }
-        >
-          Create Mem
-        </button>
-      </div>
+      {memSucceeded === null && (
+        <div className="mt-3 flex flex-col mx-4 text-header-text border-t border-t-header-text h-[13%]">
+          <button
+            className="my-3 w-full rounded-md text-white py-3 text-xl bg-gradient-to-tr from-button-red to-button-purple hover:from-button-purple hover:to-button-red"
+            onClick={async () => {
+              setLoading(true);
+              // await wait(1000);
+              createMem(memClient, tags, title, tab.url, description)
+                .then(() => {
+                  setMemSucceeded(true);
+                  setLoading(false);
+                })
+                .catch(() => {
+                  setMemSucceeded(false);
+                  setLoading(false);
+                });
+            }}
+          >
+            Create Mem
+          </button>
+        </div>
+      )}
     </main>
   );
 }
