@@ -22,6 +22,7 @@ function App() {
   const [signinErrorMsg, setSigninErrorMsg] = useState<string | null>("");
   const [memClient, setMemClient] = useState<MemClient | undefined>(undefined);
   const [memSucceeded, setMemSucceeded] = useState<boolean | null>(null); // Null = do not show. false = error, true = success
+  const [pageText, setPageText] = useState<string>("");
 
   const port = chrome.runtime.connect({ name: "myPort" });
 
@@ -45,9 +46,7 @@ function App() {
       // Get API key from storage
       await getStorageApiKey();
 
-      // Get contents of page
-      console.log("TAB ID: ", tab.id);
-
+      // Get contents of page with chrome scripting API
       chrome.scripting
         .executeScript({
           target: { tabId: tab.id as number },
@@ -55,12 +54,18 @@ function App() {
             return document.body.innerText;
           },
         })
-        .then(([data]) => console.log("injected a function", data.result));
+        .then(([data]) => {
+          if (data.result) {
+            setPageText(data.result);
+          } else {
+            setPageText("Error: Could not get page text");
+          }
+        });
 
       setLoading(false);
 
       return () => {
-        // disconnect port
+        // disconnect port on unmount to prevent memory leaks
         port.disconnect();
       };
     }
@@ -324,13 +329,32 @@ function App() {
         <div className="pt-3 flex flex-col mx-4 text-header-text border-t border-t-header-text">
           <div className="flex w-full justify-between">
             {[
-              { name: "Normal", icon: PencilIcon },
-              { name: "Summarize", icon: DocumentTextIcon },
-              { name: "Clear", icon: TrashIcon },
+              {
+                name: "All",
+                icon: PencilIcon,
+                func: () => {
+                  setDescription(pageText);
+                },
+              },
+              {
+                name: "Summarize",
+                icon: DocumentTextIcon,
+                func: () => {
+                  // USE LLMODEL TO SUMMARIZE
+                  setDescription(pageText);
+                },
+              },
+              {
+                name: "Clear",
+                icon: TrashIcon,
+                func: () => {
+                  setDescription("");
+                },
+              },
             ].map((mode) => (
               <button
                 className="px-2 py-1 gap-2 text-sm border border-gray-200 rounded-md font-bold hover:bg-slate-200 flex items-center "
-                onClick={() => {}}
+                onClick={mode.func}
               >
                 <mode.icon width="16" height="16" />
                 {mode.name}
