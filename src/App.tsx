@@ -285,7 +285,7 @@ function App() {
           <div className="flex gap-1">
             {/* Edit button */}
             <button
-              className="hover:bg-slate-200 py-1 pr-1 rounded-md text-xs w-fit"
+              className="hover:bg-slate-200 py-1 px-1 rounded-md text-xs w-fit"
               onClick={() => {
                 setEditingTitle(!editingTitle);
               }}
