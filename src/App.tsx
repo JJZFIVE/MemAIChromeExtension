@@ -280,7 +280,7 @@ function App() {
           {/* TODO: Button to edit the title, or auto-summarize */}
           <h1 className="text-2xl font-bold">{tab.title}</h1>
           {/* TODO: truncate with ellipsis this url */}
-          <h2 className="text-lg mt-2">{tab.url}</h2>
+          <h2 className="text-sm mt-2 truncate">{tab.url}</h2>
 
           {/* Tag input */}
           <div
