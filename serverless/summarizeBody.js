@@ -28,7 +28,7 @@ exports.handler = async (event) => {
             content: "Summarize this text:" + message,
           },
         ],
-        max_tokens: 1000,
+        max_tokens: 3000,
       })
       .then((response) => response.data.choices[0].message.content.trim());
 

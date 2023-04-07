@@ -10,6 +10,7 @@ import {
 import { MemClient } from "@mem-labs/mem-node";
 import createMem from "./utils/createMem";
 import axios from "axios";
+import { SUMMARIZE_BODY_URL, SUMMARIZE_TITLE_URL } from "./constants";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -341,16 +342,27 @@ function App() {
                 name: "Summarize",
                 icon: DocumentTextIcon,
                 func: async () => {
-                  const res = await axios.post(
-                    "https://u47ywgl6gj.execute-api.us-east-1.amazonaws.com/default/MemAiSummarizerBody",
-                    {
-                      message: pageText,
-                    }
-                  );
+                  setDescription("Summarizing...");
+                  try {
+                    // Check if page text is too long, in which case just take the first 2000 characters
+                    const pageTextToSummarize =
+                      pageText.length > 1000
+                        ? pageText.slice(0, 2000)
+                        : pageText;
 
-                  setDescription(
-                    "Could not find a good package that summarizes well that would work in a browser extension. Ran out of time :)"
-                  );
+                    const summary = await axios
+                      .post(SUMMARIZE_BODY_URL, {
+                        message: pageTextToSummarize,
+                      })
+                      .then((res) => res.data.response);
+
+                    setDescription(summary);
+                  } catch (error) {
+                    console.log(error);
+                    setDescription(
+                      "Error summarizing. Page text might be too long."
+                    );
+                  }
                 },
               },
               {
