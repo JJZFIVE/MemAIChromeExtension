@@ -340,8 +340,9 @@ function App() {
                 name: "Summarize",
                 icon: DocumentTextIcon,
                 func: () => {
-                  // USE LLMODEL TO SUMMARIZE
-                  setDescription(pageText);
+                  setDescription(
+                    "Could not find a good package that summarizes well that would work in a browser extension. Ran out of time :)"
+                  );
                 },
               },
               {
