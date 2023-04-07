@@ -34,8 +34,20 @@ function App() {
     let queryOptions = { active: true, lastFocusedWindow: true };
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
     let [tab] = await chrome.tabs.query(queryOptions);
-    console.log(tab);
     return tab;
+  }
+
+  function setNewTag() {
+    if (tagInput == "" || tags.includes("#" + tagInput)) return;
+    setTags(["#" + tagInput, ...tags]);
+    setTagInput("");
+  }
+
+  function handleKeyDown(event: any) {
+    if (event.key === "Enter") {
+      event.preventDefault(); // prevent form submission
+      setNewTag();
+    }
   }
 
   useEffect(() => {
@@ -44,7 +56,6 @@ function App() {
       setLoading(true);
 
       const tab = await getTabs();
-      console.log(tab);
       setTab(tab);
       setTitle(tab?.title ? tab?.title : "No Title Found");
 
@@ -343,15 +354,12 @@ function App() {
                 placeholder="Tags"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleKeyDown}
               />
             </div>
             <button
               className="bg-button-dark rounded-md text-white w-1/4 h-8 text-center text-sm hover:opacity-90 border"
-              onClick={() => {
-                if (tagInput == "" || tags.includes("#" + tagInput)) return;
-                setTags(["#" + tagInput, ...tags]);
-                setTagInput("");
-              }}
+              onClick={setNewTag}
             >
               + Tag
             </button>
@@ -428,7 +436,7 @@ function App() {
 
           {/* Input box */}
           <textarea
-            className="w-full h-32 mt-3 px-3 py-2 rounded-md text-body-text text-sm bg-main border border-gray-200"
+            className="w-full h-40 mt-3 px-3 py-2 rounded-md text-body-text text-sm bg-main border border-gray-200"
             placeholder="Add Description..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -454,16 +462,3 @@ function App() {
 }
 
 export default App;
-
-{
-  /* <button onClick={async () => await setStorageApiKey("12345abcd")}>
-        SET STORAGE API KEY
-      </button>
-      <br />
-      <button onClick={async () => await getStorageApiKey()}>
-        GET STORAGE API KEY
-      </button>
-      <br />
-
-      <p>APIKEY: {apiKey}</p> */
-}
